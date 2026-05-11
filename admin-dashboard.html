@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HARA Admin — Professional Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<style>
+  :root {
+    --primary: #355EFC;
+    --secondary: #E8EFFF;
+    --navy: #011A41;
+    --light: #F8F9FA;
+    --white: #FFFFFF;
+    --gray: #666567;
+    --border: #EEEEEE;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    background: var(--light);
+    color: var(--navy);
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 280px;
+    background: var(--navy);
+    padding: 40px 24px;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    z-index: 100;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 50px;
+    text-decoration: none;
+    color: var(--white);
+    font-size: 1.8rem;
+    font-weight: 700;
+  }
+  .logo span { color: var(--primary); }
+
+  .nav-menu { list-style: none; flex: 1; }
+  .nav-item { margin-bottom: 8px; }
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: 8px;
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s;
+  }
+  .nav-link:hover, .nav-link.active {
+    background: rgba(53, 94, 252, 0.1);
+    color: var(--white);
+  }
+  .nav-link svg { width: 20px; height: 20px; stroke: currentColor; }
+
+  /* ── MAIN CONTENT ── */
+  .main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 40px 60px;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+  }
+  .header h1 { font-size: 2.2rem; }
+  .header h1 em { font-style: normal; color: var(--primary); }
+
+  .btn-primary {
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    border-radius: 4px;
+    padding: 12px 24px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  .btn-primary:hover { background: var(--navy); transform: translateY(-2px); }
+
+  /* ── STATS ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+    margin-bottom: 40px;
+  }
+  .stat-card {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 0 45px rgba(0,0,0,0.05);
+    transition: 0.3s;
+  }
+  .stat-card:hover { transform: translateY(-5px); border-bottom: 3px solid var(--primary); }
+  .stat-label { font-size: 0.9rem; color: var(--gray); font-weight: 500; margin-bottom: 10px; }
+  .stat-value { font-size: 2.2rem; font-weight: 700; color: var(--navy); }
+  .stat-trend { font-size: 0.8rem; margin-top: 10px; color: var(--primary); font-weight: 500; }
+
+  /* ── TABLES ── */
+  .content-section {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 35px;
+    box-shadow: 0 0 45px rgba(0,0,0,0.05);
+    margin-bottom: 40px;
+  }
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 20px;
+  }
+  .section-title { font-size: 1.4rem; }
+
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left; font-size: 0.85rem; color: var(--gray);
+    text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 15px 10px; border-bottom: 2px solid var(--light);
+  }
+  td { padding: 20px 10px; border-bottom: 1px solid var(--light); font-size: 0.95rem; }
+  
+  .candidate { display: flex; align-items: center; gap: 15px; }
+  .avatar {
+    width: 35px; height: 35px; border-radius: 50%;
+    background: var(--secondary); color: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.9rem;
+  }
+  
+  .status {
+    padding: 5px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 600;
+  }
+  .status-new { background: var(--secondary); color: var(--primary); }
+  .status-approved { background: #E1F7E3; color: #00B074; }
+  .status-rejected { background: #FFE5E5; color: #EF4444; }
+
+  .actions { display: flex; gap: 8px; }
+  .btn-icon {
+    width: 32px; height: 32px; border-radius: 4px; border: 1px solid var(--border);
+    background: none; color: var(--gray); cursor: pointer; transition: 0.3s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .btn-icon:hover { border-color: var(--primary); color: var(--primary); }
+  .btn-icon.delete:hover { border-color: #EF4444; color: #EF4444; }
+
+  /* ── TABS ── */
+  .dashboard-tabs { display: flex; gap: 30px; margin-bottom: 30px; border-bottom: 1px solid var(--border); }
+  .tab-btn {
+    background: none; border: none; color: var(--gray);
+    padding: 15px 0; font-family: inherit; cursor: pointer;
+    font-size: 1rem; font-weight: 600; position: relative;
+  }
+  .tab-btn.active { color: var(--primary); }
+  .tab-btn.active::after {
+    content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
+    height: 3px; background: var(--primary);
+  }
+
+  /* ── MODALS ── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(1, 26, 65, 0.8);
+    backdrop-filter: blur(8px); z-index: 2000;
+    display: none; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-content {
+    background: var(--white); border-radius: 8px; padding: 40px;
+    width: 100%; max-width: 550px; position: relative;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  }
+  .modal-close {
+    position: absolute; top: 20px; right: 20px;
+    background: none; border: none; font-size: 2rem; color: var(--navy); cursor: pointer;
+  }
+  .form-group { margin-bottom: 20px; }
+  .form-label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--navy); }
+  .form-input {
+    width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px;
+    font-family: inherit; font-size: 0.95rem; outline: none;
+  }
+
+  /* ── REVEAL ── */
+  .wow { opacity: 0; }
+  .wow.animated { opacity: 1; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div style="text-align: center; padding: 40px 0; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px;">
+    <a href="job-portal.html">
+      <img src="hara_logo.png" alt="HARA Logo" style="height: 120px; width: auto; filter: brightness(1.1);">
+    </a>
+  </div>
+  
+  <nav class="nav-menu">
+    <li class="nav-item">
+      <a href="javascript:void(0)" class="nav-link active" onclick="switchTab('overview')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" stroke-width="2"/></svg>
+        Overview
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="javascript:void(0)" class="nav-link" onclick="switchTab('students')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" stroke-width="2"/></svg>
+        Talent Pool
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="javascript:void(0)" class="nav-link" onclick="switchTab('companies')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" stroke-width="2"/></svg>
+        Company Requests
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="javascript:void(0)" class="nav-link" onclick="switchTab('submissions')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-width="2"/></svg>
+        Job Submissions
+      </a>
+    </li>
+  </nav>
+
+  <div class="nav-item" style="margin-top: auto;">
+    <a href="javascript:void(0)" class="nav-link" onclick="logoutAdmin()">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+      Secure Logout
+    </a>
+  </div>
+</aside>
+
+<main class="main-content">
+  <header class="header wow animate__fadeInDown">
+    <div>
+      <h1>Admin <em>Dashboard</em></h1>
+      <p style="color: var(--gray); font-size: 1rem; margin-top: 5px;">Manage your hiring funnel and talent pipeline.</p>
+    </div>
+    <div style="display:flex; gap:15px;">
+      <button class="btn-primary" style="background:none; border:1px solid #EF4444; color:#EF4444;" onclick="resetPlatform()">Reset Platform</button>
+      <button class="btn-primary" onclick="document.getElementById('post-modal').classList.add('active')">+ Post New Opening</button>
+    </div>
+  </header>
+
+  <div class="dashboard-tabs wow animate__fadeIn" data-wow-delay="0.2s">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('students')">Registered Students</button>
+    <button class="tab-btn" onclick="switchTab('companies')">Company Requests</button>
+    <button class="tab-btn" onclick="switchTab('submissions')">Job Submissions</button>
+  </div>
+
+  <div id="tab-overview">
+    <div class="stats-grid">
+      <div class="stat-card wow animate__fadeInUp" data-wow-delay="0.1s">
+        <div class="stat-label">Total Applications</div>
+        <div class="stat-value" id="stat-apps">0</div>
+        <div class="stat-trend">↑ Live Tracking</div>
+      </div>
+      <div class="stat-card wow animate__fadeInUp" data-wow-delay="0.2s">
+        <div class="stat-label">Live Openings</div>
+        <div class="stat-value" id="stat-openings">0</div>
+        <div class="stat-trend">Active Listings</div>
+      </div>
+      <div class="stat-card wow animate__fadeInUp" data-wow-delay="0.3s">
+        <div class="stat-label">Registered Students</div>
+        <div class="stat-value" id="stat-total-users">0</div>
+        <div class="stat-trend">Verified Profiles</div>
+      </div>
+      <div class="stat-card wow animate__fadeInUp" data-wow-delay="0.4s">
+        <div class="stat-label">Hired Talents</div>
+        <div class="stat-value" id="stat-hired">0</div>
+        <div class="stat-trend">Successful Placements</div>
+      </div>
+    </div>
+
+    <section class="content-section wow animate__fadeInUp" data-wow-delay="0.5s">
+      <div class="section-header">
+        <h2 class="section-title">Recent Job Applications</h2>
+        <button class="btn-primary" style="background:none; color:var(--primary); padding:0;" onclick="updateDashboard()">Refresh Data</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Candidate</th>
+            <th>Applied For</th>
+            <th>Qualification</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="apps-list">
+          <!-- Dynamic -->
+        </tbody>
+      </table>
+    </section>
+
+    <section class="content-section wow animate__fadeInUp" data-wow-delay="0.6s">
+      <div class="section-header">
+        <h2 class="section-title">Manage Active Openings</h2>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Role Title</th>
+            <th>Company</th>
+            <th>Type</th>
+            <th>Location</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="openings-list">
+          <!-- Dynamic -->
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <div id="tab-students" style="display:none;">
+    <section class="content-section animate__animated animate__fadeIn">
+      <div class="section-header">
+        <h2 class="section-title">Full Talent Pipeline</h2>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Contact</th>
+            <th>Qualification</th>
+            <th>Experience</th>
+            <th>Joined</th>
+          </tr>
+        </thead>
+        <tbody id="users-list">
+          <!-- Dynamic -->
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <div id="tab-companies" style="display:none;">
+    <section class="content-section animate__animated animate__fadeIn">
+      <div class="section-header">
+        <h2 class="section-title">New Company Requests</h2>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Company Name</th>
+            <th>Work Email</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="company-requests-list">
+          <!-- Dynamic -->
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <div id="tab-submissions" style="display:none;">
+    <section class="content-section animate__animated animate__fadeIn">
+      <div class="section-header">
+        <h2 class="section-title">Pending Job Submissions</h2>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Role Title</th>
+            <th>Company</th>
+            <th>Type</th>
+            <th>Details</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="job-submissions-list">
+          <!-- Dynamic -->
+        </tbody>
+      </table>
+    </section>
+  </div>
+</main>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="post-modal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="document.getElementById('post-modal').classList.remove('active')">&times;</button>
+    <h3 style="margin-bottom: 25px; font-size: 1.6rem;">Post New Job Opening</h3>
+    <form id="post-opening-form">
+      <div class="form-group">
+        <label class="form-label">Job Category</label>
+        <select class="form-input" id="op-type">
+          <option value="engineering">Engineering</option>
+          <option value="design">Design</option>
+          <option value="marketing">Marketing</option>
+          <option value="internship">Internship</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Role Title</label>
+        <input type="text" class="form-input" id="op-title" placeholder="e.g. Senior Product Designer" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Company Name</label>
+        <input type="text" class="form-input" id="op-company" placeholder="e.g. HARA Tech" required>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+        <div class="form-group">
+          <label class="form-label">Location</label>
+          <input type="text" class="form-input" id="op-location" placeholder="Remote / Bengaluru" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Salary Range</label>
+          <input type="text" class="form-input" id="op-salary" placeholder="e.g. $50k - $80k" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Key Requirements</label>
+        <textarea class="form-input" id="op-req" rows="3" placeholder="Briefly list skills..."></textarea>
+      </div>
+      <button type="submit" class="btn-primary" style="width: 100%; padding: 16px; font-size: 1.1rem;">Post Now</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Auth Check
+  if (sessionStorage.getItem('admin_token') !== 'hara_admin_session_active') {
+    window.location.href = 'admin-login.html';
+  }
+
+  function logoutAdmin() {
+    sessionStorage.removeItem('admin_token');
+    window.location.href = 'admin-login.html';
+  }
+
+  const API_URL = '/api';
+
+  // Intersection Observer for scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const delay = entry.target.getAttribute('data-wow-delay') || '0s';
+        entry.target.style.animationDelay = delay;
+        entry.target.classList.add('animate__animated', 'animated');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.wow').forEach(el => observer.observe(el));
+
+  async function getOpenings() {
+    const res = await fetch(`${API_URL}/openings`);
+    return await res.json();
+  }
+  async function getApplications() {
+    const res = await fetch(`${API_URL}/applications`);
+    return await res.json();
+  }
+  async function getUsers() {
+    const res = await fetch(`${API_URL}/users`);
+    return await res.json();
+  }
+  async function getCompanyRequests() {
+    const res = await fetch(`${API_URL}/admin/company-requests`);
+    return await res.json();
+  }
+  async function getJobSubmissions() {
+    const res = await fetch(`${API_URL}/admin/job-submissions`);
+    return await res.json();
+  }
+
+  window.switchTab = (tab) => {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    
+    // Find the caller and add active class (handle both tab-btn and nav-link)
+    if (event) {
+      event.currentTarget.classList.add('active');
+    }
+
+    const tabs = ['overview', 'students', 'companies', 'submissions'];
+    tabs.forEach(t => {
+      const el = document.getElementById(`tab-${t}`);
+      if (el) el.style.display = t === tab ? 'block' : 'none';
+    });
+    
+    if (tab !== 'overview') updateDashboard();
+  };
+
+  async function updateDashboard() {
+    const openings = await getOpenings();
+    const apps = await getApplications();
+    const users = await getUsers();
+
+    document.getElementById('stat-apps').innerText = apps.length;
+    document.getElementById('stat-openings').innerText = openings.length;
+    document.getElementById('stat-total-users').innerText = users.length;
+    document.getElementById('stat-hired').innerText = apps.filter(a => a.status === 'Approved').length;
+
+    // Applications
+    const appsList = document.getElementById('apps-list');
+    appsList.innerHTML = '';
+    apps.slice(0, 10).forEach(app => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>
+          <div class="candidate">
+            <div class="avatar">${app.name[0]}</div>
+            <div>
+              <div style="font-weight:600;">${app.name}</div>
+              <div style="font-size:0.8rem; color:var(--gray);">${app.email}</div>
+            </div>
+          </div>
+        </td>
+        <td>${app.role}</td>
+        <td>${app.qualification || 'N/A'}</td>
+        <td><span class="status status-${app.status.toLowerCase()}">${app.status}</span></td>
+        <td class="actions">
+          <button class="btn-icon" onclick="updateAppStatus(${app.id}, 'Approved')"><i class="fas fa-check"></i></button>
+          <button class="btn-icon delete" onclick="updateAppStatus(${app.id}, 'Rejected')"><i class="fas fa-times"></i></button>
+        </td>
+      `;
+      appsList.appendChild(row);
+    });
+
+    // Openings
+    const opsList = document.getElementById('openings-list');
+    opsList.innerHTML = '';
+    openings.forEach(op => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td style="font-weight:600;">${op.title}</td>
+        <td>${op.company}</td>
+        <td><span class="status status-new" style="text-transform:capitalize;">${op.type}</span></td>
+        <td>${op.location}</td>
+        <td class="actions">
+          <button class="btn-icon delete" onclick="deleteOpening(${op.id})"><i class="fas fa-trash"></i></button>
+        </td>
+      `;
+      opsList.appendChild(row);
+    });
+
+    // Users
+    const usersList = document.getElementById('users-list');
+    usersList.innerHTML = '';
+    users.forEach(u => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>
+          <div class="candidate">
+            <div class="avatar">${u.name[0]}</div>
+            <div>
+              <div style="font-weight:600;">${u.name}</div>
+              <div style="font-size:0.8rem; color:var(--gray);">${u.email}</div>
+            </div>
+          </div>
+        </td>
+        <td>${u.phone || '-'}</td>
+        <td>${u.qualification || '-'}</td>
+        <td>${u.experience || '-'}</td>
+        <td>${new Date(u.created_at).toLocaleDateString()}</td>
+      `;
+      usersList.appendChild(row);
+    });
+
+    // Company Requests
+    const reqs = await getCompanyRequests();
+    const reqsList = document.getElementById('company-requests-list');
+    reqsList.innerHTML = '';
+    reqs.forEach(req => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td style="font-weight:600;">${req.name}</td>
+        <td>${req.email}</td>
+        <td>${new Date(req.created_at).toLocaleDateString()}</td>
+        <td class="actions">
+          <button class="btn-icon" onclick="approveCompany(${req.id}, 'approved')"><i class="fas fa-check"></i></button>
+          <button class="btn-icon delete" onclick="approveCompany(${req.id}, 'rejected')"><i class="fas fa-times"></i></button>
+        </td>
+      `;
+      reqsList.appendChild(row);
+    });
+
+    // Job Submissions
+    const subs = await getJobSubmissions();
+    const subsList = document.getElementById('job-submissions-list');
+    subsList.innerHTML = '';
+    subs.forEach(sub => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td style="font-weight:600;">${sub.title}</td>
+        <td>${sub.company_name}</td>
+        <td><span class="status status-new">${sub.type}</span></td>
+        <td><button class="btn-icon" onclick="alert('${sub.req.replace(/'/g, "\\'")}')"><i class="fas fa-eye"></i></button></td>
+        <td class="actions">
+          <button class="btn-icon" onclick="postJob(${sub.id})"><i class="fas fa-upload"></i> Post Job</button>
+        </td>
+      `;
+      subsList.appendChild(row);
+    });
+  }
+
+  window.approveCompany = async (id, status) => {
+    await fetch(`${API_URL}/admin/approve-company/${id}`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ status })
+    });
+    updateDashboard();
+  };
+
+  window.postJob = async (id) => {
+    const res = await fetch(`${API_URL}/admin/post-job/${id}`, { method: 'POST' });
+    if (res.ok) {
+      alert('Job posted successfully!');
+      updateDashboard();
+    }
+  };
+
+  window.updateAppStatus = async (id, status) => {
+    await fetch(`${API_URL}/applications/${id}`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ status })
+    });
+    updateDashboard();
+  };
+
+  window.deleteOpening = async (id) => {
+    if (!confirm('Delete this opening?')) return;
+    await fetch(`${API_URL}/openings/${id}`, { method: 'DELETE' });
+    updateDashboard();
+  };
+
+  async function resetPlatform() {
+    if (!confirm('Warning: This will clear ALL applications and openings. Proceed?')) return;
+    await fetch(`${API_URL}/applications`, { method: 'DELETE' });
+    const ops = await getOpenings();
+    for (let op of ops) await fetch(`${API_URL}/openings/${op.id}`, { method: 'DELETE' });
+    location.reload();
+  }
+
+  document.getElementById('post-opening-form').onsubmit = async (e) => {
+    e.preventDefault();
+    const newOp = {
+      type: document.getElementById('op-type').value,
+      title: document.getElementById('op-title').value,
+      company: document.getElementById('op-company').value,
+      location: document.getElementById('op-location').value,
+      salary: document.getElementById('op-salary').value,
+      req: document.getElementById('op-req').value
+    };
+    await fetch(`${API_URL}/openings`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(newOp)
+    });
+    document.getElementById('post-modal').classList.remove('active');
+    e.target.reset();
+    updateDashboard();
+  };
+
+  updateDashboard();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+</body>
+</html>

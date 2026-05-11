@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HARA — Company Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<style>
+  :root {
+    --primary: #355EFC;
+    --navy: #011A41;
+    --light: #F8F9FA;
+    --white: #FFFFFF;
+    --gray: #666567;
+    --border: #EEEEEE;
+  }
+  body { font-family: 'Jost', sans-serif; background: var(--light); color: var(--navy); margin: 0; }
+  
+  .navbar { background: var(--white); padding: 20px 80px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+  .logo { font-size: 1.8rem; font-weight: 700; color: var(--primary); text-decoration: none; }
+  .logo span { color: var(--navy); }
+
+  .container { max-width: 1000px; margin: 60px auto; padding: 0 20px; }
+  
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+  .header h1 { font-size: 2.2rem; }
+  
+  .submission-card { background: var(--white); padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+  
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 30px; }
+  .form-group { margin-bottom: 20px; }
+  .form-label { display: block; font-weight: 600; margin-bottom: 8px; }
+  .form-input {
+    width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px;
+    font-family: inherit; font-size: 1rem; outline: none;
+  }
+  textarea.form-input { grid-column: span 2; }
+
+  .btn-submit {
+    grid-column: span 2; padding: 18px; background: var(--primary); color: white;
+    border: none; border-radius: 6px; font-size: 1.1rem; font-weight: 700;
+    cursor: pointer; transition: 0.3s; margin-top: 20px;
+  }
+  .btn-submit:hover { background: var(--navy); transform: translateY(-2px); }
+
+  .status-badge {
+    display: inline-block; padding: 8px 16px; border-radius: 50px;
+    font-size: 0.85rem; font-weight: 700; background: #E1F7E3; color: #00B074;
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="job-portal.html" class="logo">
+    <img src="hara_logo.png" alt="HARA Logo" style="height: 40px; width: auto;">
+  </a>
+  <div style="display:flex; align-items:center; gap:20px;">
+    <span id="company-name" style="font-weight:600;"></span>
+    <button onclick="logout()" style="background:none; border:none; color:#EF4444; font-weight:600; cursor:pointer;">Logout</button>
+  </div>
+</nav>
+
+<div class="container">
+  <header class="header wow animate__fadeInDown">
+    <div>
+      <h1>Share Job <em>Opening</em></h1>
+      <p style="color:var(--gray); margin-top:5px;">Your details will be reviewed by the HARA Admin before posting.</p>
+    </div>
+    <div class="status-badge">Approved Partner</div>
+  </header>
+
+  <div class="submission-card wow animate__fadeInUp">
+    <h3 style="border-bottom:1px solid #eee; padding-bottom:15px;">New Submission Form</h3>
+    <form id="submission-form" class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Job Title</label>
+        <input type="text" id="title" class="form-input" placeholder="e.g. Frontend Developer" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Job Category</label>
+        <select id="type" class="form-input">
+          <option value="engineering">Engineering</option>
+          <option value="design">Design</option>
+          <option value="marketing">Marketing</option>
+          <option value="internship">Internship</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Location</label>
+        <input type="text" id="location" class="form-input" placeholder="Remote / City" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Salary Range</label>
+        <input type="text" id="salary" class="form-input" placeholder="e.g. $50,000 - $70,000" required>
+      </div>
+      <textarea id="req" class="form-input" rows="5" placeholder="List the job requirements and description here..." required></textarea>
+      
+      <button type="submit" class="btn-submit">Submit Details to Admin</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  const session = JSON.parse(sessionStorage.getItem('company_session'));
+  if (!session) window.location.href = 'company-login.html';
+  
+  document.getElementById('company-name').innerText = `Hi, ${session.name}`;
+
+  function logout() {
+    sessionStorage.removeItem('company_session');
+    window.location.href = 'company-login.html';
+  }
+
+  document.getElementById('submission-form').onsubmit = async (e) => {
+    e.preventDefault();
+    const data = {
+      company_id: session.id,
+      company_name: session.name,
+      title: document.getElementById('title').value,
+      type: document.getElementById('type').value,
+      location: document.getElementById('location').value,
+      salary: document.getElementById('salary').value,
+      req: document.getElementById('req').value
+    };
+
+    try {
+      const res = await fetch('/api/company/submit-job', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (res.ok) {
+        alert('Job details sent to Admin for review!');
+        e.target.reset();
+      } else {
+        alert('Submission failed. Please try again.');
+      }
+    } catch (err) {
+      alert('Network error.');
+    }
+  };
+</script>
+
+</body>
+</html>

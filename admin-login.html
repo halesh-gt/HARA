@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HARA — Admin Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+  :root {
+    --primary: #355EFC;
+    --navy: #011A41;
+    --light: #F8F9FA;
+    --white: #FFFFFF;
+  }
+  body {
+    font-family: 'Jost', sans-serif;
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+  }
+  .login-card {
+    background: var(--white);
+    padding: 60px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    text-align: center;
+  }
+  .logo-text {
+    font-size: 2.5rem;
+    color: var(--primary);
+    font-weight: 700;
+    margin-bottom: 30px;
+    display: block;
+    text-decoration: none;
+  }
+  h2 { color: var(--navy); margin-bottom: 40px; }
+  .form-group { text-align: left; margin-bottom: 25px; }
+  .form-label { display: block; font-weight: 600; margin-bottom: 10px; color: var(--navy); }
+  .form-input {
+    width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 6px;
+    font-family: inherit; font-size: 1rem; outline: none; box-sizing: border-box;
+  }
+  .form-input:focus { border-color: var(--primary); }
+  .btn-login {
+    width: 100%; background: var(--primary); color: var(--white);
+    border: none; padding: 18px; border-radius: 6px; font-weight: 700;
+    font-size: 1.1rem; cursor: pointer; transition: 0.3s;
+  }
+  .btn-login:hover { background: var(--navy); transform: translateY(-2px); }
+  .error-msg { color: #EF4444; margin-top: 20px; display: none; }
+</style>
+</head>
+<body>
+
+<div class="login-card">
+  <div style="text-align: center; margin-bottom: 40px;">
+    <a href="job-portal.html">
+      <img src="hara_logo.png" alt="HARA Logo" style="height: 140px; width: auto; filter: brightness(1.1);">
+    </a>
+  </div>
+  <h2>Portal Login</h2>
+  <form id="admin-login-form">
+    <div class="form-group">
+      <label class="form-label">Admin Email</label>
+      <input type="email" id="email" class="form-input" required placeholder="admin@hara.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input type="password" id="password" class="form-input" required placeholder="••••••••">
+    </div>
+    <button type="submit" class="btn-login">Secure Login</button>
+    <div class="error-msg" id="error">Invalid admin credentials</div>
+  </form>
+</div>
+
+<script>
+document.getElementById('admin-login-form').onsubmit = async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  const errorEl = document.getElementById('error');
+  errorEl.style.display = 'none';
+
+  try {
+    const res = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ email, password })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      sessionStorage.setItem('admin_token', 'hara_admin_session_active');
+      window.location.href = 'admin-dashboard.html';
+    } else {
+      errorEl.style.display = 'block';
+    }
+  } catch (err) {
+    errorEl.innerText = 'Server error. Try again later.';
+    errorEl.style.display = 'block';
+  }
+};
+</script>
+
+</body>
+</html>
