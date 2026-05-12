@@ -244,6 +244,12 @@
         Job Submissions
       </a>
     </li>
+    <li class="nav-item">
+      <a href="javascript:void(0)" class="nav-link" onclick="switchTab('site-content')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 002.572-1.065z" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke-width="2"/></svg>
+        Site Content
+      </a>
+    </li>
   </nav>
 
   <div class="nav-item" style="margin-top: auto;">
@@ -382,6 +388,8 @@
     </section>
   </div>
 
+  </div>
+
   <div id="tab-submissions" style="display:none;">
     <section class="content-section animate__animated animate__fadeIn">
       <div class="section-header">
@@ -401,6 +409,58 @@
           <!-- Dynamic -->
         </tbody>
       </table>
+    </section>
+  </div>
+
+  <div id="tab-site-content" style="display:none;">
+    <section class="content-section animate__animated animate__fadeIn">
+      <div class="section-header">
+        <h2 class="section-title">Manage Website Content</h2>
+        <p style="color:var(--gray);">Modify any text or image asset on the main website.</p>
+      </div>
+      
+      <div id="content-edit-form" style="display:grid; grid-template-columns:1fr 1fr; gap:30px;">
+        <!-- Categories for easier editing -->
+        <div class="edit-group">
+          <h3 style="margin-bottom:15px; color:var(--primary);">Hero Section 1</h3>
+          <div class="form-group"><label class="form-label">Slide 1 Title</label><input type="text" id="edit-hero_title_1" class="form-input"></div>
+          <div class="form-group"><label class="form-label">Slide 1 Subtitle</label><textarea id="edit-hero_subtitle_1" class="form-input" style="height:100px;"></textarea></div>
+          <div class="form-group"><label class="form-label">Slide 1 Image URL</label><input type="text" id="edit-hero_img_1" class="form-input"></div>
+        </div>
+        
+        <div class="edit-group">
+          <h3 style="margin-bottom:15px; color:var(--primary);">Hero Section 2</h3>
+          <div class="form-group"><label class="form-label">Slide 2 Title</label><input type="text" id="edit-hero_title_2" class="form-input"></div>
+          <div class="form-group"><label class="form-label">Slide 2 Subtitle</label><textarea id="edit-hero_subtitle_2" class="form-input" style="height:100px;"></textarea></div>
+          <div class="form-group"><label class="form-label">Slide 2 Image URL</label><input type="text" id="edit-hero_img_2" class="form-input"></div>
+        </div>
+
+        <div class="edit-group">
+          <h3 style="margin-bottom:15px; color:var(--primary);">About Us Section</h3>
+          <div class="form-group"><label class="form-label">About Title</label><input type="text" id="edit-about_title" class="form-input"></div>
+          <div class="form-group"><label class="form-label">About Description</label><textarea id="edit-about_desc" class="form-input" style="height:120px;"></textarea></div>
+          <div class="form-group"><label class="form-label">About Image URL</label><input type="text" id="edit-about_img" class="form-input"></div>
+        </div>
+
+        <div class="edit-group">
+          <h3 style="margin-bottom:15px; color:var(--primary);">Website Statistics</h3>
+          <div class="form-group"><label class="form-label">Jobs Published</label><input type="text" id="edit-stat_jobs_published" class="form-input"></div>
+          <div class="form-group"><label class="form-label">Jobs Completed</label><input type="text" id="edit-stat_jobs_completed" class="form-input"></div>
+          <div class="form-group"><label class="form-label">World Wide Clients</label><input type="text" id="edit-stat_clients" class="form-input"></div>
+          <div class="form-group"><label class="form-label">Awards Won</label><input type="text" id="edit-stat_awards" class="form-input"></div>
+        </div>
+
+        <div class="edit-group">
+          <h3 style="margin-bottom:15px; color:var(--primary);">Footer & Contact</h3>
+          <div class="form-group"><label class="form-label">Footer About Text</label><textarea id="edit-footer_about" class="form-input" style="height:100px;"></textarea></div>
+          <div class="form-group"><label class="form-label">Contact Phone</label><input type="text" id="edit-footer_phone" class="form-input"></div>
+          <div class="form-group"><label class="form-label">Contact Email</label><input type="text" id="edit-footer_email" class="form-input"></div>
+        </div>
+      </div>
+      
+      <div style="margin-top:40px; text-align:right;">
+        <button onclick="saveSiteContent()" class="btn-primary" style="padding:15px 40px; font-size:1.1rem;">Save All Changes</button>
+      </div>
     </section>
   </div>
 </main>
@@ -503,7 +563,7 @@
       event.currentTarget.classList.add('active');
     }
 
-    const tabs = ['overview', 'students', 'companies', 'submissions'];
+    const tabs = ['overview', 'students', 'companies', 'submissions', 'site-content'];
     tabs.forEach(t => {
       const el = document.getElementById(`tab-${t}`);
       if (el) el.style.display = t === tab ? 'block' : 'none';
@@ -685,6 +745,40 @@
     updateDashboard();
   };
 
+  // --- SITE CONTENT MANAGEMENT ---
+  async function loadSiteContentAdmin() {
+    try {
+      const res = await fetch('/api/site-content');
+      const content = await res.json();
+      Object.entries(content).forEach(([key, val]) => {
+        const el = document.getElementById('edit-' + key);
+        if (el) el.value = val;
+      });
+    } catch (err) { console.error('Error loading admin site content:', err); }
+  }
+
+  window.saveSiteContent = async () => {
+    const updates = {};
+    const inputs = document.querySelectorAll('[id^="edit-"]');
+    inputs.forEach(input => {
+      const key = input.id.replace('edit-', '');
+      updates[key] = input.value;
+    });
+
+    const res = await fetch('/api/site-content', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(updates)
+    });
+
+    if (res.ok) {
+      alert('Website content updated successfully! Refresh the portal to see changes.');
+    } else {
+      alert('Error updating content.');
+    }
+  };
+
+  loadSiteContentAdmin();
   updateDashboard();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>

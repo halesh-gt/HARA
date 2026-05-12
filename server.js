@@ -137,6 +137,14 @@ db.connect((err) => {
     )
   `;
 
+  const createSiteContentTable = `
+    CREATE TABLE IF NOT EXISTS site_content (
+      content_key VARCHAR(100) PRIMARY KEY,
+      content_value TEXT,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )
+  `;
+
   db.query(createOpeningsTable, (err) => { if(err) console.error('Openings table error:', err); });
   db.query(createApplicationsTable, (err) => { if(err) console.error('Apps table error:', err); });
   
@@ -148,6 +156,33 @@ db.connect((err) => {
           db.query('INSERT INTO admins (email, password) VALUES (?, ?)', ['admin@hara.com', 'admin123']);
           console.log('Default admin created: admin@hara.com / admin123');
         }
+      });
+    }
+  });
+
+  db.query(createSiteContentTable, (err) => {
+    if(err) console.error('SiteContent table error:', err);
+    else {
+      const defaults = [
+        ['hero_title_1', 'Best Career Growth Opportunities'],
+        ['hero_subtitle_1', 'Connecting top talent with industry leaders.'],
+        ['hero_img_1', 'hero_finanza.png'],
+        ['hero_title_2', 'Find Your Dream Internship'],
+        ['hero_subtitle_2', 'Step into the professional world with HARA.'],
+        ['hero_img_2', 'hero_office_exterior.png'],
+        ['about_title', 'We Help To Get The Best Job And Find A Talent'],
+        ['about_desc', 'HARA is dedicated to connecting top talent with industry leaders. Our mission is to empower professionals to find their true calling.'],
+        ['about_img', 'about_us.png'],
+        ['stat_jobs_published', '1234'],
+        ['stat_jobs_completed', '4567'],
+        ['stat_clients', '890'],
+        ['stat_awards', '123'],
+        ['footer_about', 'Connect with industry leaders and find your next big opportunity with HARA. We provide the tools and support you need to excel in your career.'],
+        ['footer_phone', '+012 345 67890'],
+        ['footer_email', 'info@hara.com']
+      ];
+      defaults.forEach(([key, val]) => {
+        db.query('INSERT IGNORE INTO site_content (content_key, content_value) VALUES (?, ?)', [key, val]);
       });
     }
   });
@@ -381,6 +416,33 @@ app.post('/api/admin/post-job/:id', (req, res) => {
       });
     });
   });
+});
+
+// --- SITE CONTENT ROUTES ---
+
+app.get('/api/site-content', (req, res) => {
+  db.query('SELECT * FROM site_content', (err, results) => {
+    if (err) return res.status(500).send(err);
+    const content = {};
+    results.forEach(row => { content[row.content_key] = row.content_value; });
+    res.json(content);
+  });
+});
+
+app.post('/api/site-content', (req, res) => {
+  const updates = req.body; // { key1: val1, key2: val2 }
+  const promises = Object.entries(updates).map(([key, val]) => {
+    return new Promise((resolve, reject) => {
+      db.query('INSERT INTO site_content (content_key, content_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE content_value = ?', [key, val, val], (err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+  });
+
+  Promise.all(promises)
+    .then(() => res.json({ message: 'Content updated successfully' }))
+    .catch(err => res.status(500).send(err));
 });
 
 app.listen(port, () => {
