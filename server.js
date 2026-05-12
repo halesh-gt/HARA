@@ -164,14 +164,14 @@ db.connect((err) => {
     if(err) console.error('SiteContent table error:', err);
     else {
       const defaults = [
-        ['hero_title_1', 'Best Career Growth Opportunities'],
-        ['hero_subtitle_1', 'Connecting top talent with industry leaders.'],
+        ['hero_title_1', 'Premier Jobs for ITI & Diploma Students'],
+        ['hero_subtitle_1', 'Bridging the gap between Non-IT industries and skilled technical talent.'],
         ['hero_img_1', 'hero_finanza.png'],
-        ['hero_title_2', 'Find Your Dream Internship'],
-        ['hero_subtitle_2', 'Step into the professional world with HARA.'],
-        ['hero_img_2', 'hero_office_exterior.png'],
-        ['about_title', 'We Help To Get The Best Job And Find A Talent'],
-        ['about_desc', 'HARA is dedicated to connecting top talent with industry leaders. Our mission is to empower professionals to find their true calling.'],
+        ['hero_title_2', 'Launch Your Technical Career'],
+        ['hero_subtitle_2', 'Specialized opportunities for Diploma holders in Manufacturing and Engineering.'],
+        ['hero_img_2', 'hero_presentation.png'],
+        ['about_title', 'Empowering Technical Talent in Non-IT Sectors'],
+        ['about_desc', 'HARA is the dedicated platform for ITI and Diploma students to find meaningful careers in core industries. We focus on non-IT sectors like Manufacturing, Infrastructure, and Technical Services.'],
         ['about_img', 'about_us.png'],
         ['stat_jobs_published', '1234'],
         ['stat_jobs_completed', '4567'],
