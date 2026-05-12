@@ -283,7 +283,7 @@ app.post('/api/applications', (req, res) => {
 });
 
 // Update application status
-app.patch('/api/applications/:id', (req, res) => {
+app.put('/api/applications/:id', (req, res) => {
   const { status } = req.body;
   db.query('UPDATE applications SET status = ? WHERE id = ?', [status, req.params.id], (err) => {
     if (err) return res.status(500).send(err);
