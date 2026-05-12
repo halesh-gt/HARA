@@ -179,7 +179,23 @@ db.connect((err) => {
         ['stat_awards', '123'],
         ['footer_about', 'Connect with industry leaders and find your next big opportunity with HARA. We provide the tools and support you need to excel in your career.'],
         ['footer_phone', '+012 345 67890'],
-        ['footer_email', 'info@hara.com']
+        ['footer_email', 'info@hara.com'],
+        ['how_it_works_title', 'How It Works'],
+        ['how_it_works_desc', 'Get started with HARA in three simple steps and jumpstart your professional journey.'],
+        ['step_1_title', 'Create Account'],
+        ['step_1_desc', 'Sign up with your professional details and create a standout profile.'],
+        ['step_2_title', 'Upload Resume'],
+        ['step_2_desc', 'Upload your latest CV or portfolio to get noticed by top companies.'],
+        ['step_3_title', 'Apply Job'],
+        ['step_3_desc', 'Browse thousands of openings and apply to your dream role with one click.'],
+        ['jobs_title', 'Job Listing'],
+        ['jobs_subtitle', 'Find your next big opportunity with HARA.'],
+        ['resume_builder_title', 'ATS-Friendly Resume Builder'],
+        ['resume_builder_desc', 'Build a professional, ATS-optimized resume in minutes. Enter your details and download your custom career document.'],
+        ['testimonials_title', 'Our Clients Say!!!'],
+        ['testimonials_subtitle', 'Discover how HARA has transformed the careers of thousands of professionals across the globe.'],
+        ['faq_title', 'Frequently Asked Questions'],
+        ['faq_desc', 'Find answers to common questions about using the HARA recruitment portal.']
       ];
       defaults.forEach(([key, val]) => {
         db.query('INSERT IGNORE INTO site_content (content_key, content_value) VALUES (?, ?)', [key, val]);
