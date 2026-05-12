@@ -730,12 +730,18 @@
   };
 
   window.updateAppStatus = async (id, status) => {
-    await fetch(`${API_URL}/applications/${id}`, {
+    console.log('Updating application:', id, 'to', status);
+    const res = await fetch(`${API_URL}/applications/${id}`, {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ status })
     });
-    updateDashboard();
+    if (res.ok) {
+      console.log('Update successful');
+      updateDashboard();
+    } else {
+      console.error('Update failed:', await res.text());
+    }
   };
 
   window.deleteOpening = async (id) => {

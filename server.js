@@ -17,11 +17,9 @@ process.on('unhandledRejection', (reason, promise) => {
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, './'))); 
 
 // Serve the main portal at the root
 app.get('/', (req, res) => {
-  console.log('Root hit: serving job-portal.html');
   res.sendFile(path.join(__dirname, 'job-portal.html'));
 });
 
@@ -460,6 +458,9 @@ app.post('/api/site-content', (req, res) => {
     .then(() => res.json({ message: 'Content updated successfully' }))
     .catch(err => res.status(500).send(err));
 });
+
+// Serve static files at the end
+app.use(express.static(path.join(__dirname, './')));
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
